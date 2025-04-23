@@ -16,12 +16,13 @@
 </template>
 
 <script setup>
-const { slides, fetchSlides, addSlideToStore, removeSlideFromStore } = useSlides()
+const { slides, fetchSlides, addSlideToStore, removeSlideFromStore, setupRealtime } = useSlides()
 const title = ref('')
 const content = ref('')
 
-onMounted(() => {
-    fetchSlides()
+onMounted(async () => {
+    await fetchSlides()
+    setupRealtime()
 })
 
 function addSlide() {

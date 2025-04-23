@@ -19,14 +19,12 @@ export const useSlides = () => {
 
     const addSlideToStore = async ({ title, content }) => {
         const { $supabase } = useNuxtApp()
-        const { data, error } = await $supabase
+        const { error } = await $supabase
             .from('slides')
             .insert([{ title, content }])
 
         if (error) {
             console.error('Error adding slide:', error.message)
-        } else {
-            await fetchSlides()
         }
     }
 
@@ -39,38 +37,42 @@ export const useSlides = () => {
 
         if (error) {
             console.error('Error removing slide:', error.message)
-        } else {
-            await fetchSlides()
         }
     }
 
-    // Realtime subscription to listen for changes in the slides table
     const setupRealtime = () => {
         const { $supabase } = useNuxtApp()
 
         $supabase
-            .from('slides')
-            .on('INSERT', (payload) => {
-                console.log('Slide added:', payload)
-                slides.value.push(payload.new)
-            })
-            .on('DELETE', (payload) => {
-                console.log('Slide removed:', payload)
-                slides.value = slides.value.filter(slide => slide.id !== payload.old.id)
-            })
+            .channel('slides-changes')
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'slides' },
+                (payload) => {
+                    console.log('Realtime change:', payload)
+
+                    if (payload.eventType === 'INSERT') {
+                        slides.value.push(payload.new)
+                    } else if (payload.eventType === 'DELETE') {
+                        slides.value = slides.value.filter(
+                            (slide) => slide.id !== payload.old.id
+                        )
+                    } else if (payload.eventType === 'UPDATE') {
+                        const index = slides.value.findIndex((s) => s.id === payload.new.id)
+                        if (index !== -1) {
+                            slides.value[index] = payload.new
+                        }
+                    }
+                }
+            )
             .subscribe()
     }
-
-    // Call fetchSlides initially and setup the real-time listener
-    onMounted(async () => {
-        await fetchSlides()
-        setupRealtime()
-    })
 
     return {
         slides,
         fetchSlides,
         addSlideToStore,
         removeSlideFromStore,
+        setupRealtime,
     }
 }
