@@ -26,14 +26,20 @@ onMounted(() => {
 
 function addSlide() {
     if (title.value && content.value) {
+        console.log('Adding slide:', { title: title.value, content: content.value })
         addSlideToStore({
             title: title.value,
             content: content.value
+        }).then(() => {
+            console.log('Slide added')
+        }).catch((e) => {
+            console.error('Error adding slide:', e)
         })
         title.value = ''
         content.value = ''
     }
 }
+
 
 function removeSlide(id) {
     removeSlideFromStore(id)
