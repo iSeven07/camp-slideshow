@@ -1,13 +1,12 @@
 <template>
-    <div class="min-h-screen bg-black text-white flex items-center justify-center">
-      <div v-if="slides.length" class="text-center">
-        <h1 class="text-5xl font-bold mb-4">{{ currentSlide.title }}</h1>
-        <p class="text-2xl">{{ currentSlide.content }}</p>
-      </div>
-      <div v-else>
-        <p>Loading or no slides found...</p>
-      </div>
-    </div>
+  <div class="bg-gray-900 text-white min-h-screen">
+
+    <h1 class="text-8xl font-bold pt-5 pl-9"><span class="text-yellow-500">| </span>Announcement</h1>
+    <!-- Border container -->
+    
+    <TextSlide :slides :currentSlide />
+
+  </div>
   </template>
   
 
