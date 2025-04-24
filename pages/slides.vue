@@ -1,7 +1,7 @@
 <template>
   <div class="bg-gray-900 text-white min-h-screen">
 
-    <h1 class="text-8xl font-bold pt-5 pl-9"><span class="text-yellow-500">| </span>Announcement</h1>
+    <h1 class="lg:text-8xl md:text-7xl sm:text-3xl font-bold pt-5 pl-9"><span class="text-yellow-500">| </span>Announcement</h1>
     <!-- Border container -->
     
     <TextSlide :slides :currentSlide />
